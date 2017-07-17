@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<style>	
+		.container{
+			width: 80%;
+			margin: 0 auto;
+		}
+	</style>
+	<script src="js/jquery.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.twbsPagination.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="page"><ul class="sync-pagination pagination-sm"></ul></div>	
+		<div class="content"></div>
+		<div class="page"><ul class="sync-pagination pagination-sm"></ul></div>
+	</div>
+</body>
+<script>
+total =100;
+	$('.sync-pagination').twbsPagination({
+        totalPages: total,
+        visiblePages: 7,
+        prevText: '<span aria-hidden="true">&laquo;</span>',
+        nextText: '<span aria-hidden="true">&raquo;</span>',
+        onPageClick: function (evt, page) {
+        	// console.log(evt);
+            $.get("/?tab=all&page="+page,function(arr){
+            	total = arr[arr.length-1].totalPage;
+            	console.log(total);
+            	str="";
+            	for(var i = 0 ; i < arr.length-1 ; i++)
+            	{	
+            		str+='<a href="'+arr[i].content_href+'" class="list-group-item"><img src="'+arr[i].img_href+'" width=40 height=40 alt="">&nbsp;';
+            		if(arr[i].type!='')
+            		{
+            			str+='<button type="button" class="btn btn-success btn-xs">'+arr[i].type+'</button>';
+            		}
+
+            		str+='&nbsp;&nbsp;'+arr[i].content+'</a>';
+            	}
+            	$(".content").html($(str));
+    			$(".sync-pagination").remove();
+				$(".page").html('<ul class="sync-pagination pagination-sm"></ul>');
+            	$('.sync-pagination').twbsPagination({
+            		totalPages: total,
+            		visiblePages: 7,
+            		prevText: '<span aria-hidden="true">&laquo;</span>',
+        			nextText: '<span aria-hidden="true">&raquo;</span>',
+        			onPageClick: function (evt, page){
+        				$.get("/?tab=all&page="+page,function(arr){
+        					total = arr[arr.length-1].totalPage;
+			            	console.log(total);
+			            	str="";
+			            	for(var i = 0 ; i < arr.length-1 ; i++)
+			            	{	
+			            		str+='<a href="'+arr[i].content_href+'" class="list-group-item"><img src="'+arr[i].img_href+'" width=40 height=40 alt="">&nbsp;';
+			            		if(arr[i].type!='')
+			            		{
+			            			str+='<button type="button" class="btn btn-success btn-xs">'+arr[i].type+'</button>';
+			            		}
+
+			            		str+='&nbsp;&nbsp;'+arr[i].content+'</a>';
+			            	}
+			            	$(".content").html($(str));
+        				});
+        			}
+            	});
+            });
+        }
+    });
+</script>
+</html>
+
+
+
